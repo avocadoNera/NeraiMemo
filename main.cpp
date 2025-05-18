@@ -51,23 +51,17 @@ int main(int argc, char **argv) {
     editor = new Fl_Text_Editor(0, 25, 800, 575);
     editor->buffer(textbuf);
 
-    // #ifdef _WIN32
-    //     HICON hIcon = (HICON)LoadImage(NULL, "icon.ico", IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
-    //     SendMessage(fl_xid(win), WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
-    //     SendMessage(fl_xid(win), WM_SETICON, ICON_BIG, (LPARAM)hIcon);
-    // #endif
-
     win->end();
     win->show(argc, argv);
 
     #ifdef _WIN32
-        HWND hwnd = fl_xid(win);  // show() の後に取得
+        HWND hwnd = fl_xid(win);
         HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
         if (hIcon) {
             SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
             SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM)hIcon);
         } else {
-            MessageBox(NULL, "アイコンの読み込みに失敗しました", "エラー", MB_OK);
+            MessageBox(NULL, "Failed to load .ico file.", "ERROR", MB_OK);
         }
     #endif
 

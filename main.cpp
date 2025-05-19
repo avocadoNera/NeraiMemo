@@ -50,6 +50,7 @@ int main(int argc, char **argv) {
     textbuf = new Fl_Text_Buffer();
     editor = new Fl_Text_Editor(0, 25, 800, 575);
     editor->buffer(textbuf);
+    editor->color(fl_rgb_color(170, 255, 255));
 
     win->end();
     win->show(argc, argv);

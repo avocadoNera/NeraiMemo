@@ -14,6 +14,38 @@
 Fl_Text_Buffer *textbuf = nullptr;
 Fl_Text_Editor *editor = nullptr;
 
+class TitleBar : public Fl_Box {
+public:
+    TitleBar(int X, int Y, int W, int H, const char* L = nullptr)
+        : Fl_Box(X, Y, W, H, L) {
+        box(FL_FLAT_BOX);
+        color(fl_rgb_color(100, 149, 237));  // コーンフラワーブルー
+        labelsize(14);
+        align(FL_ALIGN_CENTER);
+    }
+
+protected:
+    int handle(int event) override {
+        static int offset_x = 0;
+        static int offset_y = 0;
+
+        Fl_Window *win = window();
+        if (!win) return 0;
+
+        switch (event) {
+            case FL_PUSH:
+                offset_x = Fl::event_x_root() - win->x();
+                offset_y = Fl::event_y_root() - win->y();
+                return 1;
+            case FL_DRAG:
+                win->position(Fl::event_x_root() - offset_x,
+                             Fl::event_y_root() - offset_y);
+                return 1;
+        }
+        return Fl_Box::handle(event);
+    }
+};
+
 // Read file
 void open_cb(Fl_Widget*, void*) {
     const char* filename = fl_file_chooser("Open File", "*.txt", nullptr);
@@ -34,18 +66,20 @@ void save_cb(Fl_Widget*, void*) {
     file << textbuf->text();
 }
 
-// End
 void quit_cb(Fl_Widget*, void*) {
     exit(0);
 }
 
 int main(int argc, char **argv) {
     Fl_Window *win = new Fl_Window(800, 600, "NeraiMemo");
-    Fl_Menu_Bar *menu = new Fl_Menu_Bar(0, 0, 800, 25);
+    win->border(0);
 
-    menu->add("File/Open",  FL_CTRL + 'o', open_cb);
-    menu->add("File/Save",  FL_CTRL + 's', save_cb);
-    menu->add("File/Quit",  FL_CTRL + 'q', quit_cb);
+    TitleBar *titlebar = new TitleBar(0, 0, 800, 30, "NeraiMemo");
+
+    Fl_Menu_Bar *menu = new Fl_Menu_Bar(0, 30, 800, 25);
+    menu->add("File/Open", FL_CTRL + 'o', open_cb);
+    menu->add("File/Save", FL_CTRL + 's', save_cb);
+    menu->add("File/Quit", FL_CTRL + 'q', quit_cb);
 
     textbuf = new Fl_Text_Buffer();
     editor = new Fl_Text_Editor(0, 25, 800, 575);

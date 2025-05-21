@@ -77,6 +77,16 @@ void minimize_cb(Fl_Widget*, void*) {
 #endif
 }
 
+void show_in_taskbar(HWND hwnd) {
+    LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+    exStyle |= WS_EX_APPWINDOW;
+    SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle);
+
+    // 再表示してスタイル変更を反映させる
+    ShowWindow(hwnd, SW_HIDE);
+    ShowWindow(hwnd, SW_SHOW);
+}
+
 int main(int argc, char **argv) {
     Fl_Window *win = new Fl_Window(800, 600, "NeraiMemo");
     win->border(0);
@@ -112,6 +122,7 @@ int main(int argc, char **argv) {
 
     #ifdef _WIN32
         HWND hwnd = fl_xid(win);
+        show_in_taskbar(hwnd);
         HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
         if (hIcon) {
             SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);

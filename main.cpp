@@ -70,11 +70,32 @@ void quit_cb(Fl_Widget*, void*) {
     exit(0);
 }
 
+void minimize_cb(Fl_Widget*, void*) {
+#ifdef _WIN32
+    HWND hwnd = fl_xid(Fl::first_window());
+    ShowWindow(hwnd, SW_MINIMIZE);
+#endif
+}
+
 int main(int argc, char **argv) {
     Fl_Window *win = new Fl_Window(800, 600, "NeraiMemo");
     win->border(0);
 
     TitleBar *titlebar = new TitleBar(0, 0, 800, 30, "NeraiMemo");
+
+    Fl_Button *close_btn = new Fl_Button(770, 0, 30, 30, "×");
+    close_btn->labelsize(16);
+    close_btn->callback(quit_cb);
+    close_btn->color(fl_rgb_color(220, 20, 60));  // crimson
+    close_btn->labelcolor(FL_WHITE);
+    close_btn->box(FL_FLAT_BOX);
+
+    Fl_Button *minimize_btn = new Fl_Button(740, 0, 30, 30, "―");
+    minimize_btn->labelsize(16);
+    minimize_btn->callback(minimize_cb);
+    minimize_btn->color(fl_rgb_color(100, 149, 237));
+    minimize_btn->labelcolor(FL_WHITE);
+    minimize_btn->box(FL_FLAT_BOX);
 
     Fl_Menu_Bar *menu = new Fl_Menu_Bar(0, 30, 800, 25);
     menu->add("File/Open", FL_CTRL + 'o', open_cb);

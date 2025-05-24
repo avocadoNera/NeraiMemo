@@ -77,6 +77,21 @@ void minimize_cb(Fl_Widget*, void*) {
 #endif
 }
 
+void maximize_cb(Fl_Widget*, void*) {
+#ifdef _WIN32
+    HWND hwnd = fl_xid(Fl::first_window());
+
+    // モニターのワークエリア（タスクバーを除いた領域）を取得
+    RECT workArea;
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
+
+    // FLTKのウィンドウをフルスクリーンに見えるサイズに変更
+    Fl::first_window()->resize(workArea.left, workArea.top,
+                               workArea.right - workArea.left,
+                               workArea.bottom - workArea.top);
+#endif
+}
+
 void show_in_taskbar(HWND hwnd) {
     LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
     exStyle |= WS_EX_APPWINDOW;
@@ -93,19 +108,26 @@ int main(int argc, char **argv) {
 
     TitleBar *titlebar = new TitleBar(0, 0, 800, 30, "NeraiMemo");
 
-    Fl_Button *close_btn = new Fl_Button(770, 0, 30, 30, "×");
+    Fl_Button *close_btn = new Fl_Button(730, 0, 70, 30, "閉じちゃう");
     close_btn->labelsize(16);
     close_btn->callback(quit_cb);
     close_btn->color(fl_rgb_color(220, 20, 60));  // crimson
     close_btn->labelcolor(FL_WHITE);
     close_btn->box(FL_FLAT_BOX);
 
-    Fl_Button *minimize_btn = new Fl_Button(740, 0, 30, 30, "―");
+    Fl_Button *minimize_btn = new Fl_Button(680, 0, 50, 30, "かくす");
     minimize_btn->labelsize(16);
     minimize_btn->callback(minimize_cb);
     minimize_btn->color(fl_rgb_color(100, 149, 237));
     minimize_btn->labelcolor(FL_WHITE);
     minimize_btn->box(FL_FLAT_BOX);
+
+    Fl_Button *maximize_btn = new Fl_Button(610, 0, 70, 30, "大きくする");
+    maximize_btn->labelsize(16);
+    maximize_btn->callback(maximize_cb);
+    maximize_btn->color(fl_rgb_color(100, 149, 237));
+    maximize_btn->labelcolor(FL_WHITE);
+    maximize_btn->box(FL_FLAT_BOX);
 
     Fl_Menu_Bar *menu = new Fl_Menu_Bar(0, 30, 800, 25);
     menu->add("File/Open", FL_CTRL + 'o', open_cb);
@@ -113,10 +135,10 @@ int main(int argc, char **argv) {
     menu->add("File/Quit", FL_CTRL + 'q', quit_cb);
 
     textbuf = new Fl_Text_Buffer();
-    editor = new Fl_Text_Editor(0, 25, 800, 575);
+    editor = new Fl_Text_Editor(0, 55, 800, 575);
     editor->buffer(textbuf);
     editor->color(fl_rgb_color(170, 255, 255));
-
+    win->resizable(editor);
     win->end();
     win->show(argc, argv);
 

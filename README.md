@@ -1,2 +1,2 @@
 ### ビルド
-$ g++ main.cpp resource.o -o editor.exe -lfltk -mwindows
+$ g++ main.cpp resource.o -o NeraiMemo.exe -lfltk -mwindows

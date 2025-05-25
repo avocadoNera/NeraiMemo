@@ -14,6 +14,11 @@
 Fl_Text_Buffer *textbuf = nullptr;
 Fl_Text_Editor *editor = nullptr;
 
+bool isMaximized = false;
+int prevX = 0, prevY = 0, prevW = 0, prevH = 0;
+Fl_Window* mainWin     = nullptr;  // ウィンドウへのポインタを保持
+Fl_Button* maximizeBtn = nullptr; // ボタンへのポインタを保持
+
 class TitleBar : public Fl_Box {
 public:
     TitleBar(int X, int Y, int W, int H, const char* L = nullptr)
@@ -79,16 +84,24 @@ void minimize_cb(Fl_Widget*, void*) {
 
 void maximize_cb(Fl_Widget*, void*) {
 #ifdef _WIN32
-    HWND hwnd = fl_xid(Fl::first_window());
+    HWND hwnd = fl_xid(mainWin);
 
-    // モニターのワークエリア（タスクバーを除いた領域）を取得
-    RECT workArea;
-    SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
+    if (!isMaximized) {
+        // ウィンドウの現在サイズ・位置を保存
+        prevX = mainWin->x();
+        prevY = mainWin->y();
+        prevW = mainWin->w();
+        prevH = mainWin->h();
 
-    // FLTKのウィンドウをフルスクリーンに見えるサイズに変更
-    Fl::first_window()->resize(workArea.left, workArea.top,
-                               workArea.right - workArea.left,
-                               workArea.bottom - workArea.top);
+        ShowWindow(hwnd, SW_MAXIMIZE);
+        isMaximized = true;
+        maximizeBtn->label("元にもどす");
+    } else {
+        ShowWindow(hwnd, SW_RESTORE);
+        mainWin->resize(prevX, prevY, prevW, prevH);
+        isMaximized = false;
+        maximizeBtn->label("大きくする");
+    }
 #endif
 }
 
@@ -105,6 +118,7 @@ void show_in_taskbar(HWND hwnd) {
 int main(int argc, char **argv) {
     Fl_Window *win = new Fl_Window(800, 600, "NeraiMemo");
     win->border(0);
+    mainWin = win;
 
     TitleBar *titlebar = new TitleBar(0, 0, 800, 30, "NeraiMemo");
 
@@ -122,12 +136,12 @@ int main(int argc, char **argv) {
     minimize_btn->labelcolor(FL_WHITE);
     minimize_btn->box(FL_FLAT_BOX);
 
-    Fl_Button *maximize_btn = new Fl_Button(610, 0, 70, 30, "大きくする");
-    maximize_btn->labelsize(16);
-    maximize_btn->callback(maximize_cb);
-    maximize_btn->color(fl_rgb_color(100, 149, 237));
-    maximize_btn->labelcolor(FL_WHITE);
-    maximize_btn->box(FL_FLAT_BOX);
+    maximizeBtn = new Fl_Button(610, 0, 70, 30, "大きくする");
+    maximizeBtn->labelsize(16);
+    maximizeBtn->callback(maximize_cb);
+    maximizeBtn->color(fl_rgb_color(100, 149, 237));
+    maximizeBtn->labelcolor(FL_WHITE);
+    maximizeBtn->box(FL_FLAT_BOX);
 
     Fl_Menu_Bar *menu = new Fl_Menu_Bar(0, 30, 800, 25);
     menu->add("File/Open", FL_CTRL + 'o', open_cb);

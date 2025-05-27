@@ -69,13 +69,11 @@ void open_cb(Fl_Widget*, void*) {
 
 // Save file
 void save_cb(Fl_Widget*, void*) {
-    if (fl_ask("ほんとに保存する？")) {
-        const char* filename = fl_file_chooser("保存先を選んでね", "*.txt", nullptr);
-        if (!filename) return;
+    const char* filename = fl_file_chooser("保存先を選んでね", "*.txt", nullptr);
+    if (!filename) return;
 
-        std::ofstream file(filename);
-        file << textbuf->text();
-    }
+    std::ofstream file(filename);
+    file << textbuf->text();
     isModified = false;
 }
 

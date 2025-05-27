@@ -15,6 +15,7 @@ Fl_Text_Buffer *textbuf = nullptr;
 Fl_Text_Editor *editor = nullptr;
 
 bool isMaximized = false;
+bool isModified = false;
 int prevX = 0, prevY = 0, prevW = 0, prevH = 0;
 Fl_Window* mainWin     = nullptr;  // ウィンドウへのポインタを保持
 Fl_Button* maximizeBtn = nullptr; // ボタンへのポインタを保持
@@ -51,6 +52,10 @@ protected:
     }
 };
 
+void on_text_changed(int pos, int nInserted, int nDeleted, int nRestyled, const char* deletedText, void* cbArg) {
+    isModified = true;
+}
+
 // Read file
 void open_cb(Fl_Widget*, void*) {
     const char* filename = fl_file_chooser("Open File", "*.txt", nullptr);
@@ -71,9 +76,14 @@ void save_cb(Fl_Widget*, void*) {
         std::ofstream file(filename);
         file << textbuf->text();
     }
+    isModified = false;
 }
 
 void quit_cb(Fl_Widget*, void*) {
+    if (isModified) {
+        int response = fl_ask("未保存の変更があるよ。閉じていい？");
+        if (response == 0) return;
+    }
     exit(0);
 }
 
@@ -151,6 +161,7 @@ int main(int argc, char **argv) {
     menu->add("File/Quit", FL_CTRL + 'q', quit_cb);
 
     textbuf = new Fl_Text_Buffer();
+    textbuf->add_modify_callback(on_text_changed, nullptr);
     editor = new Fl_Text_Editor(0, 55, 800, 575);
     editor->buffer(textbuf);
     editor->color(fl_rgb_color(170, 255, 255));

@@ -154,9 +154,9 @@ int main(int argc, char **argv) {
     maximizeBtn->box(FL_FLAT_BOX);
 
     Fl_Menu_Bar *menu = new Fl_Menu_Bar(0, 30, 800, 25);
-    menu->add("File/Open", FL_CTRL + 'o', open_cb);
-    menu->add("File/Save", FL_CTRL + 's', save_cb);
-    menu->add("File/Quit", FL_CTRL + 'q', quit_cb);
+    menu->add("ふぁいる！/おーぷん", FL_CTRL + 'o', open_cb);
+    menu->add("ふぁいる！/ほぞん", FL_CTRL + 's', save_cb);
+    menu->add("ふぁいる！/とじる", FL_CTRL + 'q', quit_cb);
 
     textbuf = new Fl_Text_Buffer();
     textbuf->add_modify_callback(on_text_changed, nullptr);

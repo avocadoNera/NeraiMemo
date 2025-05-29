@@ -86,14 +86,11 @@ void quit_cb(Fl_Widget*, void*) {
 }
 
 void minimize_cb(Fl_Widget*, void*) {
-#ifdef _WIN32
     HWND hwnd = fl_xid(Fl::first_window());
     ShowWindow(hwnd, SW_MINIMIZE);
-#endif
 }
 
 void maximize_cb(Fl_Widget*, void*) {
-#ifdef _WIN32
     HWND hwnd = fl_xid(mainWin);
 
     if (!isMaximized) {
@@ -112,7 +109,6 @@ void maximize_cb(Fl_Widget*, void*) {
         isMaximized = false;
         maximizeBtn->label("大きくする");
     }
-#endif
 }
 
 void show_in_taskbar(HWND hwnd) {
@@ -167,17 +163,15 @@ int main(int argc, char **argv) {
     win->end();
     win->show(argc, argv);
 
-    #ifdef _WIN32
-        HWND hwnd = fl_xid(win);
-        show_in_taskbar(hwnd);
-        HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
-        if (hIcon) {
-            SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
-            SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM)hIcon);
-        } else {
-            MessageBox(NULL, "Failed to load .ico file.", "ERROR", MB_OK);
-        }
-    #endif
+    HWND hwnd = fl_xid(win);
+    show_in_taskbar(hwnd);
+    HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
+    if (hIcon) {
+        SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+        SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM)hIcon);
+    } else {
+        MessageBox(NULL, "Failed to load .ico file.", "ERROR", MB_OK);
+    }
 
     return Fl::run();
 }

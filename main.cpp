@@ -8,8 +8,10 @@
 #include <FL/x.H>
 #include "resource.h"
 #include <sstream>
+#include <string>
 #include <windows.h>
 
+using namespace std;
 
 Fl_Text_Buffer *textbuf = nullptr;
 Fl_Text_Editor *editor = nullptr;
@@ -19,6 +21,8 @@ bool isModified = false;
 int prevX = 0, prevY = 0, prevW = 0, prevH = 0;
 Fl_Window* mainWin     = nullptr;  // ウィンドウへのポインタを保持
 Fl_Button* maximizeBtn = nullptr; // ボタンへのポインタを保持
+Fl_Box* status_bar = nullptr;
+string current_filename = "（無題）";
 
 class TitleBar : public Fl_Box {
 public:
@@ -52,8 +56,17 @@ protected:
     }
 };
 
+void update_status_bar() {
+    string status = isModified ? "未保存" : "保存済み";
+    string label = "ファイル: " + current_filename + " | 状態: " + status;
+    status_bar->label(label.c_str());
+    mainWin->add(status_bar);
+    status_bar->redraw();
+}
+
 void on_text_changed(int pos, int nInserted, int nDeleted, int nRestyled, const char* deletedText, void* cbArg) {
     isModified = true;
+    update_status_bar();
 }
 
 // Read file
@@ -65,6 +78,9 @@ void open_cb(Fl_Widget*, void*) {
     std::stringstream buffer;
     buffer << file.rdbuf();
     textbuf->text(buffer.str().c_str());
+
+    current_filename = filename;
+    update_status_bar();
 }
 
 // Save file
@@ -75,6 +91,9 @@ void save_cb(Fl_Widget*, void*) {
     std::ofstream file(filename);
     file << textbuf->text();
     isModified = false;
+
+    current_filename = filename;
+    update_status_bar();
 }
 
 void quit_cb(Fl_Widget*, void*) {
@@ -156,10 +175,24 @@ int main(int argc, char **argv) {
 
     textbuf = new Fl_Text_Buffer();
     textbuf->add_modify_callback(on_text_changed, nullptr);
-    editor = new Fl_Text_Editor(0, 55, 800, 575);
+    
+    Fl_Group* editor_group = new Fl_Group(0, 55, 800, 520);
+    editor_group->resizable();
+
+    editor = new Fl_Text_Editor(0, 55, 800, 495);
     editor->buffer(textbuf);
     editor->color(fl_rgb_color(170, 255, 255));
-    win->resizable(editor);
+
+    status_bar = new Fl_Box(0, 550, 800, 25);
+    status_bar->labelfont(FL_COURIER);
+    status_bar->labelsize(14);
+    status_bar->label("ファイル: (無題) | 状態: 保存済み");
+    status_bar->box(FL_FLAT_BOX);
+    status_bar->color(fl_rgb_color(240, 240, 240));
+
+    editor_group->end();
+
+    win->resizable(editor_group);
     win->end();
     win->show(argc, argv);
 

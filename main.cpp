@@ -142,33 +142,33 @@ void show_in_taskbar(HWND hwnd) {
 
 int main(int argc, char **argv) {
     Fl_Window *win = new Fl_Window(800, 600, "NeraiMemo");
-    win->border(0);
+    //win->border(0);
     mainWin = win;
 
-    TitleBar *titlebar = new TitleBar(0, 0, 800, 30, "NeraiMemo");
+    // TitleBar *titlebar = new TitleBar(0, 0, 800, 30, "NeraiMemo");
 
-    Fl_Button *close_btn = new Fl_Button(730, 0, 70, 30, "閉じちゃう");
-    close_btn->labelsize(16);
-    close_btn->callback(quit_cb);
-    close_btn->color(fl_rgb_color(220, 20, 60));  // crimson
-    close_btn->labelcolor(FL_WHITE);
-    close_btn->box(FL_FLAT_BOX);
+    // Fl_Button *close_btn = new Fl_Button(730, 0, 70, 30, "閉じちゃう");
+    // close_btn->labelsize(16);
+    // close_btn->callback(quit_cb);
+    // close_btn->color(fl_rgb_color(220, 20, 60));  // crimson
+    // close_btn->labelcolor(FL_WHITE);
+    // close_btn->box(FL_FLAT_BOX);
 
-    Fl_Button *minimize_btn = new Fl_Button(680, 0, 50, 30, "かくす");
-    minimize_btn->labelsize(16);
-    minimize_btn->callback(minimize_cb);
-    minimize_btn->color(fl_rgb_color(100, 149, 237));
-    minimize_btn->labelcolor(FL_WHITE);
-    minimize_btn->box(FL_FLAT_BOX);
+    // Fl_Button *minimize_btn = new Fl_Button(680, 0, 50, 30, "かくす");
+    // minimize_btn->labelsize(16);
+    // minimize_btn->callback(minimize_cb);
+    // minimize_btn->color(fl_rgb_color(100, 149, 237));
+    // minimize_btn->labelcolor(FL_WHITE);
+    // minimize_btn->box(FL_FLAT_BOX);
 
-    maximizeBtn = new Fl_Button(610, 0, 70, 30, "大きくする");
-    maximizeBtn->labelsize(16);
-    maximizeBtn->callback(maximize_cb);
-    maximizeBtn->color(fl_rgb_color(100, 149, 237));
-    maximizeBtn->labelcolor(FL_WHITE);
-    maximizeBtn->box(FL_FLAT_BOX);
+    // maximizeBtn = new Fl_Button(610, 0, 70, 30, "大きくする");
+    // maximizeBtn->labelsize(16);
+    // maximizeBtn->callback(maximize_cb);
+    // maximizeBtn->color(fl_rgb_color(100, 149, 237));
+    // maximizeBtn->labelcolor(FL_WHITE);
+    // maximizeBtn->box(FL_FLAT_BOX);
 
-    Fl_Menu_Bar *menu = new Fl_Menu_Bar(0, 30, 800, 25);
+    Fl_Menu_Bar *menu = new Fl_Menu_Bar(0, 0, 800, 30);
     menu->add("ふぁいる！/おーぷん", FL_CTRL + 'o', open_cb);
     menu->add("ふぁいる！/ほぞん", FL_CTRL + 's', save_cb);
     menu->add("ふぁいる！/とじる", FL_CTRL + 'q', quit_cb);
@@ -176,10 +176,10 @@ int main(int argc, char **argv) {
     textbuf = new Fl_Text_Buffer();
     textbuf->add_modify_callback(on_text_changed, nullptr);
     
-    Fl_Group* editor_group = new Fl_Group(0, 55, 800, 520);
+    Fl_Group* editor_group = new Fl_Group(0, 30, 800, 520);
     editor_group->resizable();
 
-    editor = new Fl_Text_Editor(0, 55, 800, 495);
+    editor = new Fl_Text_Editor(0, 30, 800, 495);
     editor->buffer(textbuf);
     editor->color(fl_rgb_color(170, 255, 255));
 
